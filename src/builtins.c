@@ -47,30 +47,36 @@ static bool Printf(const char *fmt, ...) {
     va_start(args, fmt);
     int ret = vprintf(fmt, args);
     va_end(args);
-    return ret < 0;
+    return ret >= 0;
 }
 
-static void print_with_escapes(const char* s) {
+static bool Putchar(char ch) {
+    int ret = putchar(ch);
+    return ret >= 0;
+}
+
+static bool print_with_escapes(const char* s) {
     for (; *s; ++s) {
         if (*s == '\\') {
             ++s;
+            if (*s == '\0') break;
             switch (*s) {
-                case 'n': putchar('\n'); break;
-                case 't': putchar('\t'); break;
-                case 'r': putchar('\r'); break;
-                case '\\': putchar('\\'); break;
-                case 'a': putchar('\a'); break;
-                case 'b': putchar('\b'); break;
-                case 'v': putchar('\v'); break;
-                case 'f': putchar('\f'); break;
-                case '0': putchar('\0'); break;
-                case '\0': return;
-                default: putchar(*s); break;
+                case 'n': if (!Putchar('\n')) return false; break;
+                case 't': if (!Putchar('\t')) return false; break;
+                case 'r': if (!Putchar('\r')) return false; break;
+                case '\\': if (!Putchar('\\')) return false; break;
+                case 'a': if (!Putchar('\a')) return false; break;
+                case 'b': if (!Putchar('\b')) return false; break;
+                case 'v': if (!Putchar('\v')) return false; break;
+                case 'f': if (!Putchar('\f')) return false; break;
+                case '0': if (!Putchar('\0')) return false; break;
+                default: if (!Putchar(*s)) return false; break;
             }
         } else {
-            putchar(*s);
+            if (!Putchar(*s)) return false;
         }
     }
+    return true;
 }
 
 int cmd_echo(int argc, char* argv[]) {
@@ -97,13 +103,14 @@ int cmd_echo(int argc, char* argv[]) {
         ++start;
     }
     for (int i = start; i < argc; ++i) {
-        if (Printf("%s", argv[i])) return 1;
+        bool ok = eflag ? print_with_escapes(argv[i]) : Printf("%s", argv[i]);
+        if (!ok) return 1;
         if (i < argc - 1) {
-            if (Printf(" ")) return 1;
+            if (!Printf(" ")) return 1;
         }
     }
     if (!nflag) {
-        if (Printf("\n")) return 1;
+        if (!Printf("\n")) return 1;
     }
     return 0;
 }
