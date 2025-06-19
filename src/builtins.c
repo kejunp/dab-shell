@@ -22,7 +22,8 @@
 
 
 static const builtin_entry builtins[] = {
-    {"exit", cmd_exit, "terminates current dab shell"},
+    {"exit", cmd_exit, "exit [N]:\n\tterminates current dab shell wiht N\n\n\t.If N is not specified, the command will\n\texit with 0"},
+    {"echo", cmd_echo, "echo [-neE] [args ...]:\n\tWrite args to stdout\n\n\tOptions:\n\t\t-n: Supresses printing a newline\n-e: interpret backslash escape sequences\n-E: Opposite of -e"},
     {NULL, NULL, NULL}
 };
 

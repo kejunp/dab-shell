@@ -36,7 +36,7 @@ int cmd_exit(int argc, char* argv[]);
 
 int cmd_echo(int argc, char* argv[]);
 
-int cmd_type(int argc, char* argv[]);
+int cmd_help(int argc, char* argv[]);
 
 #ifdef __cplusplus
 }
