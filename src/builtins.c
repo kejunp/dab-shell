@@ -28,8 +28,8 @@ static const builtin_entry builtins[] = {
 };
 
 bool is_builtin_cmd(const char* cmd) {
-    for (int i = 0; builtins[i].name != NULL; ++i) {
-        if (strcmp(cmd, builtins[i].name) == 0) return true;
+    for (builtin_entry* curr = builtins; curr->name != NULL; ++curr) {
+        if (strcmp(cmd, builtins->name) == 0) return true;
     }
     return false;
 }
@@ -114,4 +114,11 @@ int cmd_echo(int argc, char* argv[]) {
         if (!Printf("\n")) return 1;
     }
     return 0;
+}
+
+static builtin_entry get_builtin_entry(const char* cmd) {
+    for (builtin_entry* curr = builtins; curr->name != NULL; ++curr) {
+        if (curr->name == cmd) return *curr;
+    }
+    return (builtin_entry){NULL, NULL, NULL};
 }
